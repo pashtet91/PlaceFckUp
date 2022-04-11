@@ -1,6 +1,7 @@
 package com.example.placefckup.viewmodel
 
 import android.app.Application
+import android.content.Context
 import android.graphics.Bitmap
 import android.util.Log
 import androidx.lifecycle.AndroidViewModel
@@ -8,6 +9,7 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.Transformations
 import com.example.placefckup.model.Bookmark
 import com.example.placefckup.repository.BookmarkRepo
+import com.example.placefckup.util.ImageUtils
 import com.google.android.gms.maps.model.LatLng
 import com.google.android.libraries.places.api.model.Place
 
@@ -30,6 +32,7 @@ class MapsViewModel(application: Application):
         bookmark.address = place.address.toString()
 
         val newId = bookmarkRepo.addBookmark(bookmark)
+        image?.let{bookmark.setImage(it, getApplication())}
         Log.i(TAG, "New bookmark $newId added to the database.")
 
     }
@@ -53,12 +56,22 @@ class MapsViewModel(application: Application):
 
     private fun bookmarkToMarkerView(bookmark: Bookmark) =
         BookmarkMarkerView(
-            bookmark.id, LatLng(bookmark.latitude, bookmark.longitude)
+            bookmark.id,
+            LatLng(bookmark.latitude, bookmark.longitude),
+            bookmark.name,
+            bookmark.phone
         )
 
     data class BookmarkMarkerView(
         var id: Long? = null,
-        val location: LatLng = LatLng(0.0, 0.0)
-    )
+        val location: LatLng = LatLng(0.0, 0.0),
+        val name: String = "",
+        val phone: String = ""
+    ){
+        fun getImage(context: Context) = id?.let{
+            ImageUtils.loadBitmapFromFile(context,
+                Bookmark.generateImageFileName(it))
+        }
+    }
 
 }

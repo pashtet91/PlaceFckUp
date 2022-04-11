@@ -5,10 +5,11 @@ import android.graphics.Bitmap
 import android.view.View
 import com.example.placefckup.databinding.ContentBookmarkInfoBinding
 import com.example.placefckup.ui.MapsActivity
+import com.example.placefckup.viewmodel.MapsViewModel
 import com.google.android.gms.maps.GoogleMap
 import com.google.android.gms.maps.model.Marker
 
-class BookmarkInfoWindowAdapter(context: Activity):
+class BookmarkInfoWindowAdapter(val context: Activity):
     GoogleMap.InfoWindowAdapter {
 
     private val binding = ContentBookmarkInfoBinding.inflate(
@@ -16,11 +17,22 @@ class BookmarkInfoWindowAdapter(context: Activity):
     )
 
     override fun getInfoContents(marker: Marker): View? {
-        // This function is required, but can return null if
-        // not replacing the entire info window
         val imageView = binding.photo
-        imageView.setImageBitmap((marker.tag as //Bitmap))
-                MapsActivity.PlaceInfo).image)
+        when(marker.tag){
+            is MapsActivity.PlaceInfo->{
+                imageView.setImageBitmap(
+                    (marker.tag as MapsActivity.PlaceInfo).image
+                )
+            }
+            is MapsViewModel.BookmarkMarkerView->{
+                val bookMarkview = marker.tag as
+                        MapsViewModel.BookmarkMarkerView
+//                imageView.setImageBitmap((marker.tag as //Bitmap))
+//                        MapsActivity.PlaceInfo).image)
+                imageView.setImageBitmap(bookMarkview.getImage(context))
+            }
+        }
+
         return null
     }
 
