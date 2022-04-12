@@ -6,7 +6,7 @@
     <data>
         <variable
             name="bookmarkData"
-            type="com.example.placefckup.viewmodel.MapsViewModel.BookmarkMarkerView" />
+            type="com.example.placefckup.viewmodel.MapsViewModel.BookmarkView" />
     </data>
 
     <androidx.constraintlayout.widget.ConstraintLayout

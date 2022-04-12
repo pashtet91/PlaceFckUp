@@ -1,7 +1,6 @@
 package com.example.placefckup.adapter
 
 import android.app.Activity
-import android.graphics.Bitmap
 import android.view.View
 import com.example.placefckup.databinding.ContentBookmarkInfoBinding
 import com.example.placefckup.ui.MapsActivity
@@ -24,9 +23,9 @@ class BookmarkInfoWindowAdapter(val context: Activity):
                     (marker.tag as MapsActivity.PlaceInfo).image
                 )
             }
-            is MapsViewModel.BookmarkMarkerView->{
+            is MapsViewModel.BookmarkView->{
                 val bookMarkview = marker.tag as
-                        MapsViewModel.BookmarkMarkerView
+                        MapsViewModel.BookmarkView
 //                imageView.setImageBitmap((marker.tag as //Bitmap))
 //                        MapsActivity.PlaceInfo).image)
                 imageView.setImageBitmap(bookMarkview.getImage(context))
