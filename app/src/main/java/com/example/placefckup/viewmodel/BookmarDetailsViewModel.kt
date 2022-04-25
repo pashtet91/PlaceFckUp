@@ -2,6 +2,7 @@ package com.example.placefckup.viewmodel
 
 import android.app.Application
 import android.content.Context
+import android.graphics.Bitmap
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.Transformations
@@ -75,6 +76,13 @@ class BookmarDetailsViewModel(application: Application):
         fun getImage(context: Context) = id?.let{
             ImageUtils.loadBitmapFromFile(context,
                 Bookmark.generateImageFileName(it))
+        }
+
+        fun setImage(context: Context, image: Bitmap){
+            id?.let{
+                ImageUtils.saveBitmapToFile(context, image,
+                    Bookmark.generateImageFileName(it))
+            }
         }
     }
 }

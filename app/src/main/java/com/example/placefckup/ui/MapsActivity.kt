@@ -4,6 +4,7 @@ import android.Manifest
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.graphics.Bitmap
+import android.location.Location
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
@@ -41,6 +42,8 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
     private lateinit var binding: ActivityMapsBinding
     private lateinit var placesClient: PlacesClient
     private lateinit var bookmarkListAdapter: BookmarkListAdapter
+
+    private var markers = HashMap<Long, Marker>()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -147,6 +150,25 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
         }
     }
 
+    private fun updateMapToLocation(location: Location){
+        val latLng = LatLng(location.latitude, location.longitude)
+        mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(
+            latLng, 16.0f
+        ))
+    }
+
+    fun moveToBookmark(bookmark:MapsViewModel.BookmarkView){
+        binding.drawerLayout.closeDrawer(binding.drawerViewMaps.
+        drawerView)
+        val marker = markers[bookmark.id]
+        marker?.showInfoWindow()
+
+        val location = Location("")
+        location.latitude = bookmark.location.latitude
+        location.longitude = bookmark.location.longitude
+        updateMapToLocation(location)
+    }
+
     private fun displayPoi(pointOfInterest: PointOfInterest){
         displayPoiGetPlaceStep(pointOfInterest)
     }
@@ -239,16 +261,7 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
     }
 
     private fun handleInfoWindowClick(marker: Marker){
-//        val placeInfo = (marker.tag as PlaceInfo)
-//        if(placeInfo.place != null){
-//            GlobalScope.launch {
-//                mapsViewModel.addBookmarkFromPlace(
-//                    placeInfo.place,
-//                    placeInfo.image
-//                )
-//            }
-//        }
-//        marker.remove()
+
         when(marker.tag){
             is PlaceInfo-> {
                 val placeInfo=(marker.tag as PlaceInfo)
@@ -284,7 +297,9 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
             .alpha(0.8f))
         if (marker != null) {
             marker.tag = bookmark
+            bookmark.id?.let{markers.put(it, marker)}
         }
+
         return  marker
     }
 
@@ -303,6 +318,7 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
         mapsViewModel.getBookmarkViews()?.observe(
             this, {
                 mMap.clear()
+                markers.clear()
                 it?.let{
                     displayAllBookmarks(it)
                     bookmarkListAdapter.setBookmarkData(it)

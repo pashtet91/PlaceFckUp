@@ -23,7 +23,7 @@ class MapsViewModel(application: Application):
     private var bookmarks: LiveData<List<BookmarkView>>? = null
 
     fun addBookmarkFromPlace(place: Place, image: Bitmap?){
-        val bookmark =bookmarkRepo.createBookmark()
+        val bookmark = bookmarkRepo.createBookmark()
         bookmark.placeId = place.id
         bookmark.name = place.name.toString()
         bookmark.longitude = place.latLng?.longitude?: 0.0
